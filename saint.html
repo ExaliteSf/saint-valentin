@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Veux-tu être ma Valentine ?</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.1/lottie.min.js">
+    let currentScale = 1;
+    noBtn.addEventListener("click", function(){
+      currentScale += 0.2;
+      yesBtn.style.transform = "scale(" + currentScale + ")";
+    });
+  </script>
+  <style>
+    /* Style général de la page */
+    body {
+      margin: 0;
+      padding: 0;
+      background: #ff99cc; /* Fond totalement rose après clic */
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding-top: 50px;
+      position: relative;
+      z-index: 1;
+    }
+    h1 {
+      color: #ff66b2;
+      font-size: 36px;
+      margin-bottom: 30px;
+    }
+    /* Zone des personnages */
+    .characters {
+      position: relative;
+      width: 100%;
+      height: 400px; /* Augmenté pour les slimes plus grands */
+      margin-bottom: 30px;
+    }
+    .character {
+      width: 300px; /* Slimes encore plus grands */
+      height: auto;
+      position: absolute;
+      top: 50px;
+      transition: all 1s ease;
+    }
+    .character.left {
+      left: 15%;
+      transform: scaleX(-1);
+    }
+    .character.right {
+      right: 15%;
+    }
+    /* Animation pour rapprocher les personnages */
+    .hug.left {
+      left: 40%;
+    }
+    .hug.right {
+      right: 40%;
+    }
+    .buttons {
+      margin-top: 20px;
+    }
+    button {
+      background-color: #ff66b2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.1);
+      background-color: #ff4d94;
+    }
+    /* Style pour les cœurs qui flottent */
+    .hearts-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .heart {
+      position: absolute;
+      color: #ff6699;
+      font-size: 30px;
+      opacity: 0;
+      animation: float 4s infinite;
+    }
+    @keyframes float {
+      0% {
+        transform: translateY(0) scale(0.5);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) scale(1);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Veux-tu être ma Valentine ?</h1>
+    <div class="characters">
+      <!-- Conteneurs pour les animations JSON -->
+      <div id="lottieLeft" class="character left"></div>
+      <div id="lottieRight" class="character right"></div>
+    </div>
+    <div class="buttons" id="buttonsContainer">
+      <button id="yesBtn">Oui</button>
+      <button id="noBtn">Non</button>
+    </div>
+  </div>
+  <div class="hearts-container" id="heartsContainer"></div>
+  
+  <script>
+    // Charger les animations JSON (state1.json avant le clic sur Oui)
+    let lottieLeft = lottie.loadAnimation({
+      container: document.getElementById('lottieLeft'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'state1.json'
+    });
+    
+    let lottieRight = lottie.loadAnimation({
+      container: document.getElementById('lottieRight'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'state1.json'
+    });
+
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const titre = document.querySelector("h1");
+
+    yesBtn.addEventListener("click", function(){
+      // Changer le fond en rose
+      document.body.style.background = "#ff99cc";
+      
+      // Changer les animations JSON en state2.json après le clic
+      lottieLeft.destroy();
+      lottieRight.destroy();
+      
+      lottieLeft = lottie.loadAnimation({
+        container: document.getElementById('lottieLeft'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: 'state2.json'
+      });
+      
+      lottieRight = lottie.loadAnimation({
+        container: document.getElementById('lottieRight'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: 'state2.json'
+      });
+      
+      document.getElementById("lottieLeft").classList.add("hug");
+      document.getElementById("lottieRight").classList.add("hug");
+      titre.textContent = "Merveilleux, viens faire un câlin !";
+      document.getElementById("buttonsContainer").style.display = "none";
+      spawnHearts();
+    });
+
+    // Nouveau comportement pour le bouton "Non"
+    let currentScale = 1;
+    let currentPhraseIndex = 0;
+    const phrases = [
+      "Tu es sur ?",
+      "Même avec du chocolat ?",
+      "Même pas avec un livre ?",
+      "Vraiment sûr ?",
+      "T'es vraiment sûr ?",
+      "Tu plaisantes ?",
+      "Réfléchis encore !",
+      "Sûr à 100% ?",
+      "Pas si sûr !",
+      "C'est définitif ?"
+    ];
+
+    noBtn.addEventListener("click", function(){
+      // Augmenter l'échelle du bouton Oui
+      currentScale += 0.2;
+      yesBtn.style.transform = "scale(" + currentScale + ")";
+      
+      // Changer le texte du bouton Oui en boucle parmi 10 phrases
+      yesBtn.textContent = phrases[currentPhraseIndex];
+      currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+    });
+
+    function spawnHearts() {
+      const heartsContainer = document.getElementById("heartsContainer");
+      for (let i = 0; i < 15; i++) {
+        let heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.top = "100vh";
+        heart.style.animationDuration = (3 + Math.random() * 3) + "s";
+        heart.textContent = "❤️";
+        heartsContainer.appendChild(heart);
+      }
+    }
+  </script>
+</body>
+</html>
